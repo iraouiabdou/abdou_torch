@@ -3,7 +3,7 @@ This is a minimalistic deep learning framework implemented purely in Python usin
 
 Inspired by the mechanics of modern libraries like PyTorch and Andrej Karpathy's micrograd, this repository aims to replicate the core components required for training neural networks, specifically focusing on automatic differentiation (autograd) and fundamental building blocks.
 
-Core Design Principles
+**Core Design Principles**
 
 1. The Tensor Class
 
@@ -37,12 +37,16 @@ MLP: Stacks linear layers and non-linearities to create a full Multi-Layer Perce
 
 This project features a custom implementation of the WAdam optimizer, which combines the adaptive learning rates and momentum of Adam with Decoupled Weight Decay for regularization, providing a robust update rule for parameter optimization.
 
-Educational Value
+
+**Demo: Training a simple MLP**
+
+I made a demo for the make_blobs classification and the MNIST dataset.
+
+
+**Educational Value :**
 
 This framework serves as an excellent educational tool for anyone looking to solidify their understanding of:
 
-How computation graphs are built and traversed.
-
-The exact mechanics of reverse-mode automatic differentiation.
-
-The role of momentum and adaptive learning rates in optimizers.
+- How computation graphs are built and traversed.
+- The exact mechanics of reverse-mode automatic differentiation.
+- The role of momentum and adaptive learning rates in optimizers.
