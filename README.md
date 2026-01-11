@@ -3,41 +3,61 @@ This is a minimalistic deep learning framework implemented purely in Python and 
 
 Inspired by the mechanics of modern libraries like PyTorch and Andrej Karpathy's micrograd, this repository aims to replicate the core components required for training neural networks, specifically focusing on automatic differentiation (autograd).
 
-### 📝Core Design Principles
+## 🛠️Core Design Principles
 
-**1. The Tensor Class 🧊**
+### 1. The Tensor Class 🧊
 
-The core data structure is the Tensor. It is a wrapper around a NumPy array that is responsible for:
+The core data structure is the `Tensor`. It is a wrapper around a NumPy array that is responsible for:
 
-- Holding the numerical data (.data).
+* **Numerical Data**: Stored in `.data`.
+* **Gradients**: Stored in `.grad`, representing the derivative of the loss with respect to the tensor.
+* **Graph Tracking**: Maintaining the computational history via its parents (`._prev`) and the operation that created it (`._op`).
 
-- Storing the derivative (.grad).
+### 2. Backpropagation via the Chain Rule 🔄
 
-- Tracking the computational history via its parents (._prev) and the operation that created it (._op).
+The `.backward()` method is the heart of the project. It uses a **topological sort** to process the computation graph in reverse order. This ensures that gradients are correctly accumulated and propagated through every node based on the chain rule:
 
-**2. Backpropagation via the Chain Rule 🔄**
+$$\frac{\partial \mathcal{L}}{\partial x} = \frac{\partial \mathcal{L}}{\partial y} \cdot \frac{\partial y}{\partial x}$$
 
-The backward() method is the heart of the project. It uses a topological sort to process the computation graph in reverse order, ensuring that gradients are correctly accumulated and propagated through every node (tensor) based on the chain rule.
+### 3. Operator overloading ➕
 
-**3. Operator overloading ➕**
+To make model building intuitive, essential mathematical operations (`+`, `*`, `**`, `@`, `/`) and functional layers (`tanh`, `relu`, `sum`) are implemented using Python's operator overloading (`__add__`, `__mul__`, etc.).
 
-Essential mathematical operations (+, *, **, @, /) and functional layers (tanh, relu, sum) are implemented using Python's operator overloading (__add__, __mul__, etc.).
+### 4. Neural Network Modules 🧠
 
-**4. Neural Network Modules 🧠**
+The framework provides an object-oriented API for building architectures:
+* **Module**: A base class for parameter management and state tracking.
+* **Linear**: Implements standard affine transformations ($W \cdot x + b$).
+* **MLP**: A Multi-Layer Perceptron class that stacks linear layers and non-linearities.
 
-The framework includes simple object-oriented components:
+### 5. Custom WAdam Optimizer 🎯
 
-- Module: A base class for parameter management.
+This project features a custom implementation of the **WAdam** optimizer. It combines the adaptive learning rates and momentum of Adam with **Decoupled Weight Decay**, providing superior regularization and more stable parameter updates than standard Adam.
 
-- Linear: Implements the standard affine transformation ($W \cdot x + b$).
+## 🚀 Usage Example: Training on MNIST and make_blobs
 
-- MLP: Stacks linear layers and non-linearities to create a full Multi-Layer Perceptron.
+This framework is powerful enough to achieve **+97.8%** on real datasets. Here is the workflow used to train on MNIST:
 
-**5. Custom WAdam Optimizer 🎯**
+```python
+from abdou_torch import Tensor, MLP, WAdam
+import numpy as np
 
-This project features a custom implementation of the WAdam optimizer, which combines the adaptive learning rates and momentum of Adam with Decoupled Weight Decay for regularization, providing a robust update rule for parameter optimization.
+# 1. Initialize a Deep MLP (784 -> 64 -> 64 -> 64 -> 10)
+model = MLP(784, [64, 64, 64, 10])
+optimizer = WAdam(model.parameters(), lr=0.0004, weight_decay=1e-4)
 
+# 2. Training Loop (Vectorized)
+for epoch in range(4):
+    for batch_x, batch_y in train_loader:
+        # Wrap numpy data in Tensors
+        inputs = Tensor(batch_x)
+        targets = Tensor(batch_y, requires_grad=False)
 
-### 🚀🚀🚀Demo: Training a simple MLP
+        # Forward pass & MSE Loss
+        preds = model(inputs)
+        loss = ((preds - targets)**2).sum()
 
-I made a demo for the make_blobs classification and the MNIST dataset.
+        # Backward pass
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
