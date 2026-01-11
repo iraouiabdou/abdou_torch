@@ -3,7 +3,7 @@ This is a minimalistic deep learning framework implemented purely in Python and 
 
 Inspired by the mechanics of modern libraries like PyTorch and Andrej Karpathy's micrograd, this repository aims to replicate the core components required for training neural networks, specifically focusing on automatic differentiation (autograd).
 
-### :📝Core Design Principles
+### 📝Core Design Principles
 
 **1. The Tensor Class 🧊**
 
