@@ -1,5 +1,5 @@
 # abdou_torch ⭐⭐⭐
-This is a minimalistic deep learning framework implemented purely in Python and NumPy.
+This is a minimalistic deep learning framework implemented purely in Python and NumPy/CuPy (for GPU acceleration).
 
 Inspired by the mechanics of modern libraries like PyTorch and Andrej Karpathy's micrograd, this repository aims to replicate the core components required for training neural networks, specifically focusing on automatic differentiation (autograd).
 
